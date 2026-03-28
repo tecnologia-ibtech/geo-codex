@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "outline": {
+      "command": "npx",
+      "args": ["-y", "--package=outline-mcp-server@latest", "-c", "outline-mcp-server-stdio"],
+      "env": {
+        "OUTLINE_API_KEY": "${OUTLINE_API_KEY}",
+        "OUTLINE_API_URL": "https://docs.geovendas.com/api"
+      }
+    },
+    "apontamento": {
+      "type": "http",
+      "url": "http://192.168.37.206:8100/mcp"
+    }
+  }
+}

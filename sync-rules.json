@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "exclude_exact": [
+    ".DS_Store"
+  ],
+  "exclude_prefixes": [
+    ".git/",
+    "node_modules/",
+    "__pycache__/",
+    ".sync/"
+  ],
+  "claude_only_prefixes": [
+    ".claude/"
+  ],
+  "codex_only_prefixes": [
+    ".agents/",
+    ".sync/",
+    "skills/geo-repo-sync/"
+  ],
+  "codex_only_exact": [
+    "sync-rules.json",
+    "scripts/repo_sync.py"
+  ],
+  "root_mappings": {
+    "CLAUDE.md": "AGENTS.md",
+    ".claude-plugin/marketplace.json": ".agents/plugins/marketplace.json"
+  },
+  "plugin_manifest_suffixes": {
+    "claude": "/.claude-plugin/plugin.json",
+    "codex": "/.codex-plugin/plugin.json"
+  },
+  "text_replacements": {
+    "claude_to_codex": [
+      [
+        "geo-claude",
+        "geo-codex"
+      ],
+      [
+        ".claude-plugin/marketplace.json",
+        ".agents/plugins/marketplace.json"
+      ],
+      [
+        ".claude-plugin/plugin.json",
+        ".codex-plugin/plugin.json"
+      ],
+      [
+        ".claude-plugin",
+        ".codex-plugin"
+      ],
+      [
+        "Este repositorio contem plugins que dao ao Claude contexto sobre o codebase",
+        "Este repositorio contem plugins que dao ao Codex contexto sobre o codebase"
+      ],
+      [
+        "└── .claude/skills/           # Skills internas do projeto (nao sao plugins)\n    ├── create-plugin/        #   Scaffold de plugin novo\n    ├── create-skill/         #   Nova skill em plugin existente\n    ├── update-skill/         #   Editar skill existente\n    └── geo-repo-sync/        #   Sync de geo-codex -> geo-codex",
+        "├── skills/                   # Skills locais do repositorio\n│   ├── geo-repo-sync/        #   Sync de geo-claude -> geo-codex\n│   └── repo-to-docs-geovendas/\n└── scripts/repo_sync.py      # Motor de sync compartilhado"
+      ],
+      [
+        ".claude/skills/geo-repo-sync/",
+        "skills/geo-repo-sync/"
+      ],
+      [
+        "Use `skills/geo-repo-sync/scripts/run_sync.sh --dry-run` para revisar sync de `geo-codex` para `geo-codex`",
+        "Use `skills/geo-repo-sync/scripts/run_sync.sh --dry-run` para revisar sync de `geo-claude` para `geo-codex`"
+      ],
+      [
+        "CLAUDE.md",
+        "AGENTS.md"
+      ],
+      [
+        "Claude Code",
+        "Codex"
+      ]
+    ],
+    "codex_to_claude": [
+      [
+        "geo-codex",
+        "geo-claude"
+      ],
+      [
+        ".agents/plugins/marketplace.json",
+        ".claude-plugin/marketplace.json"
+      ],
+      [
+        ".codex-plugin/plugin.json",
+        ".claude-plugin/plugin.json"
+      ],
+      [
+        ".codex-plugin",
+        ".claude-plugin"
+      ],
+      [
+        "Este repositorio contem plugins que dao ao Codex contexto sobre o codebase",
+        "Este repositorio contem plugins que dao ao Claude contexto sobre o codebase"
+      ],
+      [
+        "├── skills/                   # Skills locais do repositorio\n│   ├── geo-repo-sync/        #   Sync de geo-claude -> geo-claude\n│   └── repo-to-docs-geovendas/\n└── scripts/repo_sync.py      # Motor de sync compartilhado",
+        "└── .claude/skills/           # Skills internas do projeto (nao sao plugins)\n    ├── create-plugin/        #   Scaffold de plugin novo\n    ├── create-skill/         #   Nova skill em plugin existente\n    ├── update-skill/         #   Editar skill existente\n    └── geo-repo-sync/        #   Sync de geo-codex -> geo-claude"
+      ],
+      [
+        "skills/geo-repo-sync/",
+        ".claude/skills/geo-repo-sync/"
+      ],
+      [
+        "Use `.claude/skills/geo-repo-sync/scripts/run_sync.sh --dry-run` para revisar sync de `geo-claude` para `geo-claude`",
+        "Use `.claude/skills/geo-repo-sync/scripts/run_sync.sh --dry-run` para revisar sync de `geo-codex` para `geo-claude`"
+      ],
+      [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      [
+        "Codex",
+        "Claude Code"
+      ]
+    ]
+  }
+}

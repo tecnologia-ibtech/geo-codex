@@ -1,0 +1,33 @@
+{
+  "name": "geo-metabase",
+  "version": "1.0.0",
+  "description": "Metabase integration \u2014 analytics, SQL queries, dashboards and data exploration for Geovendas",
+  "author": {
+    "name": "IBTech - Geovendas",
+    "email": "dev@ibtech.inf.br"
+  },
+  "homepage": "https://github.com/tecnologia-ibtech/geo-codex",
+  "repository": "https://github.com/tecnologia-ibtech/geo-codex",
+  "license": "MIT",
+  "keywords": [
+    "metabase",
+    "analytics",
+    "sql",
+    "dashboard",
+    "data"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Geo Metabase",
+    "shortDescription": "Metabase integration \u2014 analytics, SQL queries, dashboards and data exploration for Geovendas",
+    "longDescription": "Metabase integration \u2014 analytics, SQL queries, dashboards and data exploration for Geovendas",
+    "developerName": "IBTech - Geovendas",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use Geo Metabase to work on geo-metabase."
+  }
+}

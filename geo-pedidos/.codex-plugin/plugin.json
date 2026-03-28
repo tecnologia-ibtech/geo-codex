@@ -1,0 +1,33 @@
+{
+  "name": "geo-pedidos",
+  "version": "1.0.0",
+  "description": "Architectural knowledge base for the Forca de Vendas (ISF) \u2014 offline-first sales app for textile/apparel reps",
+  "author": {
+    "name": "IBTech - Geovendas",
+    "email": "dev@ibtech.inf.br"
+  },
+  "homepage": "https://github.com/tecnologia-ibtech/geo-codex",
+  "repository": "https://github.com/tecnologia-ibtech/geo-codex",
+  "license": "MIT",
+  "keywords": [
+    "knowledge-base",
+    "architecture",
+    "offline-first",
+    "angularjs",
+    "java"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Geo Pedidos",
+    "shortDescription": "Architectural knowledge base for the Forca de Vendas (ISF) \u2014 offline-first sales app for textile/apparel reps",
+    "longDescription": "Architectural knowledge base for the Forca de Vendas (ISF) \u2014 offline-first sales app for textile/apparel reps",
+    "developerName": "IBTech - Geovendas",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use Geo Pedidos to work on geo-pedidos."
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Geo Repo Sync"
+  short_description: "Refresh geo-codex from geo-claude with dry-run and conflict detection"
+  default_prompt: "Sync geo-claude into geo-codex, starting with a dry-run and stopping on conflicts."

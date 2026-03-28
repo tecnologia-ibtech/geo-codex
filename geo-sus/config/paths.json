@@ -1,0 +1,16 @@
+{
+  "_comment": "Paths dos repos GeoVendas. Editar ao mudar de máquina.",
+  "base": "/home/gab/repo/geovendas",
+  "repos": {
+    "pedidos": "/home/gab/repo/geovendas/pedidos",
+    "pedidos-enm": "/home/gab/repo/geovendas/pedidos-enm",
+    "geovendas-vaadin6": "/home/gab/repo/geovendas/geovendas-vaadin6",
+    "geovendas-dotnet": "/home/gab/repo/geovendas/geovendas-dotnet",
+    "geovendas-dotnet-stockcentral": "/home/gab/repo/geovendas/geovendas-dotnet/StockCentral",
+    "geovendas-b2b": "/home/gab/repo/geovendas/geovendas-b2b",
+    "geovendas-vue": "/home/gab/repo/geovendas/geovendas-vue",
+    "geovendas-java8-etl": "/home/gab/repo/geovendas/geovendas-java8-etl",
+    "geovendas-vaadin23": "/home/gab/repo/geovendas/geovendas-vaadin23",
+    "geo-fv-malharia": "/home/gab/repo/geovendas/geo-fv-malharia"
+  }
+}

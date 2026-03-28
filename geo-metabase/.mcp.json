@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "metabase": {
+      "command": "npx",
+      "args": ["-y", "@easecloudio/mcp-metabase-server"],
+      "env": {
+        "METABASE_URL": "https://metabase.geovendas.com",
+        "METABASE_API_KEY": "${METABASE_API_KEY}"
+      }
+    }
+  }
+}

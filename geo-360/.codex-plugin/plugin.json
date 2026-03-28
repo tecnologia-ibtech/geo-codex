@@ -1,0 +1,35 @@
+{
+  "name": "geo-360",
+  "version": "1.0.0",
+  "description": "Architectural knowledge base for CRM360 \u2014 11 projects across 5 stacks (Java, .NET, Node.js, Vue.js, Vaadin)",
+  "author": {
+    "name": "IBTech - Geovendas",
+    "email": "dev@ibtech.inf.br"
+  },
+  "homepage": "https://github.com/tecnologia-ibtech/geo-codex",
+  "repository": "https://github.com/tecnologia-ibtech/geo-codex",
+  "license": "MIT",
+  "keywords": [
+    "knowledge-base",
+    "architecture",
+    "crm",
+    "vue",
+    "java",
+    "dotnet",
+    "nodejs"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Geo 360",
+    "shortDescription": "Architectural knowledge base for CRM360 \u2014 11 projects across 5 stacks (Java, .NET, Node.js, Vue.js, Vaadin)",
+    "longDescription": "Architectural knowledge base for CRM360 \u2014 11 projects across 5 stacks (Java, .NET, Node.js, Vue.js, Vaadin)",
+    "developerName": "IBTech - Geovendas",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use Geo 360 to work on geo-360."
+  }
+}

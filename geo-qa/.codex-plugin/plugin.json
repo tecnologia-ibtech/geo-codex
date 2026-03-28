@@ -1,0 +1,33 @@
+{
+  "name": "geo-qa",
+  "version": "1.0.0",
+  "description": "QA test automation \u2014 interviews testers and generates Playwright/TypeScript tests from Jira tasks",
+  "author": {
+    "name": "IBTech - Geovendas",
+    "email": "dev@ibtech.inf.br"
+  },
+  "homepage": "https://github.com/tecnologia-ibtech/geo-codex",
+  "repository": "https://github.com/tecnologia-ibtech/geo-codex",
+  "license": "MIT",
+  "keywords": [
+    "qa",
+    "testing",
+    "playwright",
+    "automation",
+    "jira"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Geo Qa",
+    "shortDescription": "QA test automation \u2014 interviews testers and generates Playwright/TypeScript tests from Jira tasks",
+    "longDescription": "QA test automation \u2014 interviews testers and generates Playwright/TypeScript tests from Jira tasks",
+    "developerName": "IBTech - Geovendas",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use Geo Qa to work on geo-qa."
+  }
+}

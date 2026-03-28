@@ -1,0 +1,14 @@
+{
+  "databases": [
+    {
+      "name": "SUS",
+      "description": "Base da tarefa",
+      "host": "192.168.37.22",
+      "port": 5432,
+      "database": "zzgabmarisol20260209",
+      "user": "postgres",
+      "password": "ibt1705",
+      "sslmode": "disable"
+    }
+  ]
+}

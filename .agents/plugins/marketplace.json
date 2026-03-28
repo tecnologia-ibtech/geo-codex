@@ -1,0 +1,116 @@
+{
+  "name": "ibtech-codex-marketplace",
+  "interface": {
+    "displayName": "Ibtech Codex Marketplace"
+  },
+  "plugins": [
+    {
+      "name": "geo-git",
+      "source": {
+        "source": "local",
+        "path": "./geo-git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    },
+    {
+      "name": "geo-ops",
+      "source": {
+        "source": "local",
+        "path": "./geo-ops"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    },
+    {
+      "name": "geo-pedidos",
+      "source": {
+        "source": "local",
+        "path": "./geo-pedidos"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    },
+    {
+      "name": "geo-360",
+      "source": {
+        "source": "local",
+        "path": "./geo-360"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    },
+    {
+      "name": "geo-setup",
+      "source": {
+        "source": "local",
+        "path": "./geo-setup"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    },
+    {
+      "name": "geo-qa",
+      "source": {
+        "source": "local",
+        "path": "./geo-qa"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Quality Assurance"
+    },
+    {
+      "name": "geo-docs",
+      "source": {
+        "source": "local",
+        "path": "./geo-docs"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    },
+    {
+      "name": "geo-sus",
+      "source": {
+        "source": "local",
+        "path": "./geo-sus"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    },
+    {
+      "name": "geo-metabase",
+      "source": {
+        "source": "local",
+        "path": "./geo-metabase"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    }
+  ]
+}

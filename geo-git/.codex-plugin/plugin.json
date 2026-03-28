@@ -1,0 +1,32 @@
+{
+  "name": "geo-git",
+  "version": "1.0.0",
+  "description": "Git workflow \u2014 semantic commits and PR creation for Geovendas repos",
+  "author": {
+    "name": "IBTech - Geovendas",
+    "email": "dev@ibtech.inf.br"
+  },
+  "homepage": "https://github.com/tecnologia-ibtech/geo-codex",
+  "repository": "https://github.com/tecnologia-ibtech/geo-codex",
+  "license": "MIT",
+  "keywords": [
+    "git",
+    "commit",
+    "pull-request",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Geo Git",
+    "shortDescription": "Git workflow \u2014 semantic commits and PR creation for Geovendas repos",
+    "longDescription": "Git workflow \u2014 semantic commits and PR creation for Geovendas repos",
+    "developerName": "IBTech - Geovendas",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use Geo Git to work on geo-git."
+  }
+}

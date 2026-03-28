@@ -1,0 +1,36 @@
+{
+  "name": "geo-sus",
+  "version": "1.0.0",
+  "description": "SUS (Sustentacao/Maintenance) task resolution \u2014 fetch Jira tasks, identify repos, fix bugs, create PRs, finalize with apontamento",
+  "author": {
+    "name": "IBTech - Geovendas",
+    "email": "dev@ibtech.inf.br"
+  },
+  "homepage": "https://github.com/tecnologia-ibtech/geo-codex",
+  "repository": "https://github.com/tecnologia-ibtech/geo-codex",
+  "license": "MIT",
+  "keywords": [
+    "sus",
+    "jira",
+    "maintenance",
+    "bug-fix",
+    "analytics",
+    "forca-de-vendas",
+    "pr",
+    "apontamento"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Geo Sus",
+    "shortDescription": "SUS (Sustentacao/Maintenance) task resolution \u2014 fetch Jira tasks, identify repos, fix bugs, create PRs, finalize with...",
+    "longDescription": "SUS (Sustentacao/Maintenance) task resolution \u2014 fetch Jira tasks, identify repos, fix bugs, create PRs, finalize with apontamento",
+    "developerName": "IBTech - Geovendas",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use Geo Sus to work on geo-sus."
+  }
+}

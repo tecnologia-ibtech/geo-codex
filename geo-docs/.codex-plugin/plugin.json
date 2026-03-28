@@ -1,0 +1,31 @@
+{
+  "name": "geo-docs",
+  "version": "1.0.0",
+  "description": "Documentation standards for features and changes in Geovendas projects",
+  "author": {
+    "name": "IBTech - Geovendas",
+    "email": "dev@ibtech.inf.br"
+  },
+  "homepage": "https://github.com/tecnologia-ibtech/geo-codex",
+  "repository": "https://github.com/tecnologia-ibtech/geo-codex",
+  "license": "MIT",
+  "keywords": [
+    "documentation",
+    "changelog",
+    "standards"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Geo Docs",
+    "shortDescription": "Documentation standards for features and changes in Geovendas projects",
+    "longDescription": "Documentation standards for features and changes in Geovendas projects",
+    "developerName": "IBTech - Geovendas",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use Geo Docs to work on geo-docs."
+  }
+}
