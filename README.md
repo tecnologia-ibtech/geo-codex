@@ -49,22 +49,21 @@ Claude faz: Le Jira → analisa PRs → entrevista QA → gera testes → commit
 ## Instalacao
 
 ```bash
-# 1. Adicionar o marketplace da IBTech
-# (no Codex, abra qualquer projeto e execute:)
-/plugin marketplace add tecnologia-ibtech/geo-codex
-
-# 2. Instalar plugins
-/plugin install geo-git
-/plugin install geo-ops
-/plugin install geo-pedidos    # devs do ISF
-/plugin install geo-360        # devs do CRM360
-/plugin install geo-qa          # QA testers
+# macOS / Linux
+./install.sh
 ```
 
-Apos a instalacao, os comandos ficam disponíveis automaticamente em qualquer projeto.
+```powershell
+# Windows PowerShell
+.\install.ps1
+```
+
+Os instaladores criam links em `~/plugins` e registram/atualizam o marketplace home-local em `~/.agents/plugins/marketplace.json`, para que o Codex descubra os plugins do `geo-codex` em qualquer workspace.
+
+Apos a instalacao, reinicie o Codex ou abra uma nova sessao para recarregar os plugins.
 
 ```bash
-claude
+codex
 > /commit           # commit semantico + push
 > /pr               # cria PR no GitHub
 > /jira-geo         # gerencia tarefas no board GEO
