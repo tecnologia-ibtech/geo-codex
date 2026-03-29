@@ -5,11 +5,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$SCRIPT_DIR"
 SOURCE_MARKETPLACE="$REPO_ROOT/.agents/plugins/marketplace.json"
 HOME_ROOT="${HOME:?HOME is not set}"
-PLUGINS_ROOT="$HOME_ROOT/plugins"
-TARGET_MARKETPLACE="$HOME_ROOT/.agents/plugins/marketplace.json"
+CODEX_HOME="${CODEX_HOME:-$HOME_ROOT/.codex}"
+SKILL_INSTALL_DIR="${SKILL_INSTALL_DIR:-$CODEX_HOME/skills}"
+PLUGIN_INSTALL_DIR="${PLUGIN_INSTALL_DIR:-$HOME_ROOT/plugins}"
+TARGET_MARKETPLACE="${MARKETPLACE_PATH:-$HOME_ROOT/.agents/plugins/marketplace.json}"
+INSTALL_MODE="${INSTALL_MODE:-symlink}"
 
 if [[ ! -f "$SOURCE_MARKETPLACE" ]]; then
   echo "Marketplace source not found: $SOURCE_MARKETPLACE" >&2
+  exit 1
+fi
+
+if ! command -v codex >/dev/null 2>&1; then
+  echo "codex CLI not found in PATH." >&2
   exit 1
 fi
 
@@ -22,47 +30,139 @@ else
   exit 1
 fi
 
-mkdir -p "$PLUGINS_ROOT" "$(dirname "$TARGET_MARKETPLACE")"
+mkdir -p "$CODEX_HOME" "$SKILL_INSTALL_DIR" "$PLUGIN_INSTALL_DIR" "$(dirname "$TARGET_MARKETPLACE")"
 
-PLUGIN_NAMES="$(
-  "$PYTHON_BIN" - "$SOURCE_MARKETPLACE" <<'PY'
+backup_path() {
+  local path="$1"
+  if [[ -e "$path" || -L "$path" ]]; then
+    local backup="${path}.bak.$(date +%Y%m%d%H%M%S)"
+    mv "$path" "$backup"
+    echo "  BACKUP $path -> $backup"
+  fi
+}
+
+install_path() {
+  local src="$1"
+  local dest="$2"
+  local label="${3:-$(basename "$dest")}"
+  local is_skill_conflict=0
+  if [[ "$label" == skill:* ]]; then
+    is_skill_conflict=1
+  fi
+
+  case "$INSTALL_MODE" in
+    symlink)
+      if [[ -L "$dest" && "$(readlink "$dest")" == "$src" ]]; then
+        echo "  SKIP $label (symlink already OK)"
+        return
+      fi
+
+      if [[ -e "$dest" || -L "$dest" ]]; then
+        if [[ "$is_skill_conflict" -eq 1 ]]; then
+          echo "  WARN $label already exists at $dest; skipping to avoid overwriting another installed skill"
+          return
+        fi
+        backup_path "$dest"
+      fi
+
+      ln -s "$src" "$dest"
+      echo "  LINK $label -> $src"
+      ;;
+    copy)
+      if [[ -L "$dest" ]]; then
+        if [[ "$is_skill_conflict" -eq 1 ]]; then
+          echo "  WARN $label already exists at $dest; skipping to avoid overwriting another installed skill"
+          return
+        fi
+        rm -f "$dest"
+      elif [[ -e "$dest" ]]; then
+        if [[ "$is_skill_conflict" -eq 1 ]]; then
+          echo "  WARN $label already exists at $dest; skipping to avoid overwriting another installed skill"
+          return
+        fi
+        rm -rf "$dest"
+      fi
+
+      mkdir -p "$dest"
+      rsync -a --delete --exclude '.DS_Store' "$src/" "$dest/"
+      echo "  COPY $label -> $dest"
+      ;;
+    *)
+      echo "Invalid INSTALL_MODE: $INSTALL_MODE" >&2
+      exit 1
+      ;;
+  esac
+}
+
+echo "=== geo-codex installer ==="
+echo "Repo: $REPO_ROOT"
+echo "Codex home: $CODEX_HOME"
+echo "Skill dir: $SKILL_INSTALL_DIR"
+echo "Plugin dir: $PLUGIN_INSTALL_DIR"
+echo "Marketplace: $TARGET_MARKETPLACE"
+echo "Install mode: $INSTALL_MODE"
+echo ""
+
+while IFS=$'\t' read -r plugin_name plugin_path; do
+  install_path "$plugin_path" "$PLUGIN_INSTALL_DIR/$plugin_name" "plugin:$plugin_name"
+done < <(
+  "$PYTHON_BIN" - "$SOURCE_MARKETPLACE" "$REPO_ROOT" <<'PY'
 import json
+import pathlib
 import sys
 
-with open(sys.argv[1], "r", encoding="utf-8") as handle:
-    payload = json.load(handle)
+marketplace = json.loads(pathlib.Path(sys.argv[1]).read_text())
+repo_root = pathlib.Path(sys.argv[2]).resolve()
 
-for plugin in payload.get("plugins", []):
-    name = plugin.get("name")
-    if name:
-        print(name)
+for plugin in marketplace.get("plugins", []):
+    name = plugin["name"]
+    rel = plugin["source"]["path"]
+    plugin_path = (repo_root / rel.replace("./", "", 1)).resolve()
+    print(f"{name}\t{plugin_path}")
 PY
-)"
+)
 
-printf '%s\n' "$PLUGIN_NAMES" | while IFS= read -r plugin_name; do
-  [[ -n "$plugin_name" ]] || continue
-  plugin_target="$REPO_ROOT/$plugin_name"
-  plugin_link="$PLUGINS_ROOT/$plugin_name"
+echo ""
 
-  if [[ ! -d "$plugin_target" ]]; then
-    echo "Plugin directory not found: $plugin_target" >&2
-    exit 1
-  fi
+while IFS=$'\t' read -r skill_name skill_path; do
+  install_path "$skill_path" "$SKILL_INSTALL_DIR/$skill_name" "skill:$skill_name"
+done < <(
+  "$PYTHON_BIN" - "$SOURCE_MARKETPLACE" "$REPO_ROOT" <<'PY'
+import json
+import pathlib
+import sys
 
-  if [[ -L "$plugin_link" ]]; then
-    rm -f "$plugin_link"
-  elif [[ -e "$plugin_link" ]]; then
-    existing_real="$(cd "$plugin_link" && pwd -P)"
-    target_real="$(cd "$plugin_target" && pwd -P)"
-    if [[ "$existing_real" != "$target_real" ]]; then
-      echo "Path already exists and is not the expected link: $plugin_link" >&2
-      exit 1
-    fi
-    continue
-  fi
+marketplace = json.loads(pathlib.Path(sys.argv[1]).read_text())
+repo_root = pathlib.Path(sys.argv[2]).resolve()
+seen = {}
 
-  ln -s "$plugin_target" "$plugin_link"
-done
+def register(skill_dir: pathlib.Path) -> None:
+    if not skill_dir.is_dir():
+        return
+    if not (skill_dir / "SKILL.md").is_file():
+        return
+
+    skill_name = skill_dir.name
+    resolved = skill_dir.resolve()
+    if skill_name in seen and seen[skill_name] != resolved:
+        raise SystemExit(
+            f"ERROR: duplicate skill '{skill_name}' in {seen[skill_name]} and {resolved}"
+        )
+    seen[skill_name] = resolved
+
+for skill_dir in sorted((repo_root / "skills").glob("*")):
+    register(skill_dir)
+
+for plugin in marketplace.get("plugins", []):
+    rel = plugin["source"]["path"]
+    plugin_root = (repo_root / rel.replace("./", "", 1)).resolve()
+    for skill_dir in sorted((plugin_root / "skills").glob("*")):
+        register(skill_dir)
+
+for skill_name, skill_path in seen.items():
+    print(f"{skill_name}\t{skill_path}")
+PY
+)
 
 REPO_ROOT="$REPO_ROOT" \
 SOURCE_MARKETPLACE="$SOURCE_MARKETPLACE" \
@@ -84,21 +184,24 @@ if target_path.exists():
         target_payload = json.load(handle)
 else:
     target_payload = {
-        "name": "local-home-marketplace",
-        "interface": {
-            "displayName": "Local Codex Plugins",
-        },
+        "name": source_payload.get("name", "local-home-marketplace"),
+        "interface": source_payload.get("interface", {"displayName": "Local Codex Plugins"}),
         "plugins": [],
     }
 
 if not isinstance(target_payload, dict):
     raise SystemExit(f"Invalid JSON root in {target_path}")
 
-target_payload.setdefault("name", "local-home-marketplace")
-target_payload.setdefault("interface", {"displayName": "Local Codex Plugins"})
-if not isinstance(target_payload["interface"], dict):
+if not target_payload.get("name") or str(target_payload.get("name", "")).startswith("[TODO:"):
+    target_payload["name"] = source_payload.get("name", "local-home-marketplace")
+
+interface = target_payload.setdefault("interface", {})
+if not isinstance(interface, dict):
     raise SystemExit(f"Invalid interface object in {target_path}")
-target_payload["interface"].setdefault("displayName", "Local Codex Plugins")
+
+source_interface = source_payload.get("interface", {})
+if (not interface.get("displayName")) or str(interface.get("displayName", "")).startswith("[TODO:"):
+    interface["displayName"] = source_interface.get("displayName", "Local Codex Plugins")
 
 plugins = target_payload.setdefault("plugins", [])
 if not isinstance(plugins, list):
@@ -139,4 +242,96 @@ print(f"Installed {len(source_payload.get('plugins', []))} geo-codex plugins int
 print(f"Plugin links point to {repo_root}")
 PY
 
-echo "Done. Restart Codex or open a new session to refresh plugins."
+while IFS=$'\t' read -r kind name payload; do
+  if CODEX_HOME="$CODEX_HOME" codex mcp get "$name" >/dev/null 2>&1; then
+    echo "  SKIP MCP $name (already configured)"
+    continue
+  fi
+
+  if [[ "$kind" == "url" ]]; then
+    CODEX_HOME="$CODEX_HOME" codex mcp add "$name" --url "$payload" >/dev/null
+    echo "  ADD MCP $name -> $payload"
+    continue
+  fi
+
+  env_args=()
+  while IFS= read -r env_kv; do
+    [[ -n "$env_kv" ]] || continue
+    env_args+=(--env "$env_kv")
+  done < <(
+    "$PYTHON_BIN" - "$payload" <<'PY'
+import json
+import sys
+
+payload = json.loads(sys.argv[1])
+for key, value in payload.get("env", {}).items():
+    print(f"{key}={value}")
+PY
+  )
+
+  cmd_parts=()
+  while IFS= read -r cmd_part; do
+    [[ -n "$cmd_part" ]] || continue
+    cmd_parts+=("$cmd_part")
+  done < <(
+    "$PYTHON_BIN" - "$payload" <<'PY'
+import json
+import sys
+
+payload = json.loads(sys.argv[1])
+command = payload["command"]
+if isinstance(command, str):
+    print(command)
+else:
+    for part in command:
+        print(part)
+
+args = payload.get("args", [])
+if isinstance(args, str):
+    print(args)
+else:
+    for part in args:
+        print(part)
+PY
+  )
+
+  CODEX_HOME="$CODEX_HOME" codex mcp add "$name" "${env_args[@]}" -- "${cmd_parts[@]}" >/dev/null
+  echo "  ADD MCP $name -> stdio"
+done < <(
+  "$PYTHON_BIN" - "$REPO_ROOT" "$SOURCE_MARKETPLACE" <<'PY'
+import json
+import pathlib
+import sys
+
+repo_root = pathlib.Path(sys.argv[1]).resolve()
+marketplace = json.loads(pathlib.Path(sys.argv[2]).read_text())
+mcp_files = []
+
+root_mcp = repo_root / ".mcp.json"
+if root_mcp.is_file():
+    mcp_files.append(root_mcp)
+
+for plugin in marketplace.get("plugins", []):
+    rel = plugin["source"]["path"]
+    plugin_root = (repo_root / rel.replace("./", "", 1)).resolve()
+    plugin_mcp = plugin_root / ".mcp.json"
+    if plugin_mcp.is_file():
+        mcp_files.append(plugin_mcp)
+
+for mcp_file in mcp_files:
+    data = json.loads(mcp_file.read_text())
+    for name, cfg in data.get("mcpServers", {}).items():
+        url = cfg.get("url")
+        if url:
+            print(f"url\t{name}\t{url}")
+        elif cfg.get("type") == "http" and cfg.get("url"):
+            print(f"url\t{name}\t{cfg['url']}")
+        else:
+            print(f"stdio\t{name}\t{json.dumps(cfg)}")
+PY
+)
+
+echo ""
+echo "Installation complete."
+echo "  Skills are available in new sessions via ~/.codex/skills."
+echo "  Plugins and slash commands require a full Codex app restart to refresh the UI."

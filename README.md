@@ -8,7 +8,7 @@
 
 # geo-codex
 
-Marketplace do [Codex](https://docs.anthropic.com/en/docs/claude-code) para o ecossistema **Geovendas** da IBTech. Plugins que dao ao Claude contexto profundo sobre nosso codebase — automacoes de workflow, knowledge base arquitetural e ferramentas de produtividade para o time de desenvolvimento.
+Marketplace local de plugins e skills do Codex para o ecossistema **Geovendas** da IBTech. Ele concentra contexto de codebase, automacoes de workflow, knowledge bases arquiteturais e ferramentas operacionais para o time de desenvolvimento.
 
 ---
 
@@ -58,9 +58,17 @@ Claude faz: Le Jira → analisa PRs → entrevista QA → gera testes → commit
 .\install.ps1
 ```
 
-Os instaladores criam links em `~/plugins` e registram/atualizam o marketplace home-local em `~/.agents/plugins/marketplace.json`, para que o Codex descubra os plugins do `geo-codex` em qualquer workspace.
+Os instaladores:
 
-Apos a instalacao, reinicie o Codex ou abra uma nova sessao para recarregar os plugins.
+- criam links dos plugins em `~/plugins`
+- publicam as skills em `~/.codex/skills`
+- registram/atualizam o marketplace home-local em `~/.agents/plugins/marketplace.json`
+- registram os MCPs declarados no repo com `codex mcp add`
+
+Apos a instalacao:
+
+- abra uma nova sessao para usar as skills instaladas em `~/.codex/skills`
+- faca um restart completo do app Codex para recarregar plugins e slash commands na UI
 
 ```bash
 codex
@@ -77,14 +85,14 @@ codex
 
 ```
 geo-codex/
-├── .codex-plugin/
+├── .agents/plugins/
 │   └── marketplace.json          # Manifesto do marketplace
 ├── geo-git/                      # Plugin: Git workflow
 │   ├── .codex-plugin/plugin.json
 │   ├── skills/
 │   │   ├── commit/               #   commit semantico automatizado
 │   │   └── create-pr/            #   criacao de PRs com titulo convencional
-│   ├── commands/                  #   /commit, /pr
+│   ├── commands/                 #   /commit, /pr
 │   └── README.md
 ├── geo-ops/                      # Plugin: Operacoes e integracao
 │   ├── .codex-plugin/plugin.json
@@ -92,7 +100,7 @@ geo-codex/
 │   │   ├── jira-geo/             #   board GEO do Jira Cloud
 │   │   ├── postgres/             #   queries PostgreSQL read-only
 │   │   └── firebase-deploy/      #   build + deploy Firebase Hosting
-│   ├── commands/                  #   /jira-geo, /firebase-deploy
+│   ├── commands/                 #   /jira-geo, /firebase-deploy
 │   └── README.md
 ├── geo-pedidos/                  # Plugin: Knowledge base Forca de Vendas
 │   ├── .codex-plugin/plugin.json
@@ -106,7 +114,7 @@ geo-codex/
 │   └── README.md
 ├── geo-qa/                       # Plugin: QA test generator
 │   ├── .codex-plugin/plugin.json
-│   ├── commands/                  #   /qa-test
+│   ├── commands/                 #   /qa-test
 │   ├── skills/
 │   │   └── qa-test/              #   skill de geracao de testes
 │   ├── tests/                    #   testes Playwright gerados
@@ -114,6 +122,9 @@ geo-codex/
 │   │   ├── vaadin24/             #     testes do CRM360 (Vaadin 24)
 │   │   └── pedidos/              #     testes do Pedidos (ISF)
 │   └── README.md
+├── skills/                       # Skills repo-locais fora de plugins
+│   ├── geo-repo-sync/
+│   └── repo-to-docs-geovendas/
 └── README.md
 ```
 
