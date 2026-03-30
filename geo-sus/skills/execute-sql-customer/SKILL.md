@@ -29,23 +29,75 @@ com LIMIT para evitar queries pesadas.
 
 ## Como usar
 
+### Procedimento obrigatorio para a URL
+
+Ao receber qualquer entrada de ambiente/cliente, siga exatamente esta ordem:
+
+1. Se a entrada for apenas um subdominio simples, como `acme`, converter para `https://acme.geovendas.com.br`
+2. Remover uma barra final solta, se existir
+3. Se a URL terminar com `/app`, remover esse sufixo
+4. Montar o endpoint final como `{BASE_URL_NORMALIZADA}/rest/igs/exec/query`
+
+Nao pedir esclarecimento ao user so porque a URL veio com `/app` ou `/app/`.
+Voce deve corrigir isso automaticamente.
+
 ### Parametros necessarios:
 
 1. **URL do cliente** — ex: `https://acme.geovendas.com.br`
    - Se o user passou so o subdominio (ex: `acme`), montar: `https://acme.geovendas.com.br`
+   - Se receber a URL da app Vaadin, normalizar para a raiz do contexto antes de chamar o REST:
+     - `https://lualua.ibtech.inf.br/IBTech_Geo/app`
+     - `https://lualua.ibtech.inf.br/IBTech_Geo/app/`
+     - ambos devem virar: `https://lualua.ibtech.inf.br/IBTech_Geo`
+   - Nunca chamar o endpoint REST em uma URL que ainda termine com `/app`
    - Se nenhum dos dois foi fornecido → PERGUNTAR ao user
 
 2. **SQL** — a query a executar
    - Se o user descreveu o que quer em linguagem natural → construir o SQL
    - Se o user passou SQL pronto → executar como esta
 
+### Normalizacao obrigatoria da URL
+
+Use esta logica literalmente antes do `curl`:
+
+```bash
+BASE_URL_RAW="<entrada do user>"
+
+if [[ "$BASE_URL_RAW" != http://* && "$BASE_URL_RAW" != https://* ]]; then
+  if [[ "$BASE_URL_RAW" == *.* ]]; then
+    BASE_URL_RAW="https://${BASE_URL_RAW}"
+  else
+    BASE_URL_RAW="https://${BASE_URL_RAW}.geovendas.com.br"
+  fi
+fi
+
+BASE_URL_NORMALIZED="${BASE_URL_RAW%/}"
+BASE_URL_NORMALIZED="${BASE_URL_NORMALIZED%/app}"
+ENDPOINT_URL="${BASE_URL_NORMALIZED}/rest/igs/exec/query"
+```
+
+### Exemplos de entrada -> saida
+
+| Entrada recebida | URL normalizada | Endpoint final |
+|------------------|-----------------|----------------|
+| `acme` | `https://acme.geovendas.com.br` | `https://acme.geovendas.com.br/rest/igs/exec/query` |
+| `https://acme.geovendas.com.br` | `https://acme.geovendas.com.br` | `https://acme.geovendas.com.br/rest/igs/exec/query` |
+| `https://lualua.ibtech.inf.br/IBTech_Geo/app` | `https://lualua.ibtech.inf.br/IBTech_Geo` | `https://lualua.ibtech.inf.br/IBTech_Geo/rest/igs/exec/query` |
+| `https://lualua.ibtech.inf.br/IBTech_Geo/app/` | `https://lualua.ibtech.inf.br/IBTech_Geo` | `https://lualua.ibtech.inf.br/IBTech_Geo/rest/igs/exec/query` |
+
 ### Executar:
 
 ```bash
-curl -s -X POST "{BASE_URL}/geovendas/rest/igs/exec/query" \
+curl -s -X POST "{ENDPOINT_URL}" \
   -H "Content-Type: application/json" \
   -d '{"query":"<SQL>","user":"geovendas.geolens","password":"G13E5TXca4"}'
 ```
+
+Checklist mental obrigatorio antes do request:
+
+- `BASE_URL_NORMALIZED` nao termina com `/`
+- `BASE_URL_NORMALIZED` nao termina com `/app`
+- `ENDPOINT_URL` termina com `/rest/igs/exec/query`
 
 Credenciais sao fixas: `user: geovendas.geolens`, `password: G13E5TXca4`
 
@@ -65,7 +117,7 @@ Quando voce precisa construir o SQL (user descreveu em linguagem natural):
 - **`WHERE` antes de `GROUP BY`**
 - **`ILIKE`** para buscas de texto (case-insensitive)
 - **`LIMIT 50`** por padrao (evitar queries pesadas)
-- **NUNCA** `SELECT *` — sempre especificar colunas
+- **Evitar** `SELECT *` ao construir SQL novo — prefira sempre especificar colunas
 
 Se o user passou SQL pronto → executar sem modificar.
 
